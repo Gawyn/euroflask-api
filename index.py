@@ -9,3 +9,8 @@ import eurostat_data
 def unemployment():
     geoKeys = request.args.get('countries').split(',')
     return jsonify(eurostat_data.getUnemploymentData(geoKeys))
+
+@app.route('/migrants-comparison')
+def migrantsComparison():
+    geoKeys = request.args.get('countries').split(',')
+    return jsonify(eurostat_data.getMigrantsComparisonData(geoKeys))
