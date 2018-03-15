@@ -3,6 +3,10 @@ import pandas as pd
 estat = Request('ESTAT')
 estat.client.config = {'stream': True, 'timeout': 120}
 
+import redis
+redisClient = redis.StrictRedis(host='localhost', port=6379, db=0)
+import pandas as pd
+
 def getUnemploymentData(countryCodes):
     result = dict()
     geoKeys = "+".join(countryCodes)
@@ -30,6 +34,12 @@ def getMigrantsComparisonData(countryCodes):
     }
 
 def __getMigrationFromTo(migrationTo, migrationFrom):
-    resp = estat.data('migr_pop1ctz', key={'GEO': migrationTo, 'SEX': 'T', 'AGE': 'TOTAL'})
-    data = resp.write(s for s in resp.data.series if s.key.CITIZEN == migrationFrom)
-    return data.values[0][0]
+    unpacked_data = redisClient.get("migrationFromTo" + migrationTo + migrationFrom)
+    if unpacked_data is None:
+        resp = estat.data('migr_pop1ctz', key={'GEO': migrationTo, 'SEX': 'T', 'AGE': 'TOTAL'})
+        data = resp.write()
+        redisClient.set("migrationFromTo" + migrationTo + migrationFrom, data.to_msgpack(compress='zlib'))
+    else:
+        data = pd.read_msgpack(unpacked_data)
+
+    return data.xs(migrationFrom, level='CITIZEN', axis=1).iloc[0][0]
