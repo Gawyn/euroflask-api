@@ -14,3 +14,9 @@ def unemployment():
 def migrantsComparison():
     geoKeys = request.args.get('countries').split(',')
     return jsonify(eurostat_data.getMigrantsComparisonData(geoKeys))
+
+@app.route('/migration-history-from')
+def populationOrigin():
+    migrationTo = request.args.get('to')
+    migrationFrom = request.args.get('from')
+    return jsonify(eurostat_data.getMigrationFromHistory(migrationTo, migrationFrom))

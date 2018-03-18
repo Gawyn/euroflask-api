@@ -28,10 +28,22 @@ def getUnemploymentData(countryCodes):
 def getMigrantsComparisonData(countryCodes):
     return {'to':
         {
-            countryCodes[0]: __getMigrationFromTo(countryCodes[0], countryCodes[1]),
-            countryCodes[1]: __getMigrationFromTo(countryCodes[1], countryCodes[0])
+            countryCodes[0]: __getLastMigrationFromTo(countryCodes[0], countryCodes[1]),
+            countryCodes[1]: __getLastMigrationFromTo(countryCodes[1], countryCodes[0])
         }
     }
+
+def getMigrationFromHistory(migrationTo, migrationFrom):
+    popHistory = __getMigrationTo(migrationTo)
+    popHistory = popHistory.where((pd.notnull(popHistory)), None)
+    popHistory = popHistory.xs(migrationFrom, level='CITIZEN', axis=1)
+    popHistory = list(popHistory.to_dict().values())[0]
+
+    res = {}
+    for key, value in popHistory.items():
+        res[key.qyear] = value
+
+    return res
 
 def __migrationToKey(migrationTo):
     return "migrationTo" + migrationTo
@@ -47,5 +59,5 @@ def __getMigrationTo(migrationTo):
 
     return data
 
-def __getMigrationFromTo(migrationTo, migrationFrom):
+def __getLastMigrationFromTo(migrationTo, migrationFrom):
     return __getMigrationTo(migrationTo).xs(migrationFrom, level='CITIZEN', axis=1).iloc[0][0]
