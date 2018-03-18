@@ -33,13 +33,19 @@ def getMigrantsComparisonData(countryCodes):
         }
     }
 
-def __getMigrationFromTo(migrationTo, migrationFrom):
-    unpacked_data = redisClient.get("migrationFromTo" + migrationTo + migrationFrom)
+def __migrationToKey(migrationTo):
+    return "migrationTo" + migrationTo
+
+def __getMigrationTo(migrationTo):
+    unpacked_data = redisClient.get(__migrationToKey(migrationTo))
     if unpacked_data is None:
         resp = estat.data('migr_pop1ctz', key={'GEO': migrationTo, 'SEX': 'T', 'AGE': 'TOTAL'})
         data = resp.write()
-        redisClient.set("migrationFromTo" + migrationTo + migrationFrom, data.to_msgpack(compress='zlib'))
+        redisClient.set(__migrationToKey(migrationTo), data.to_msgpack(compress='zlib'))
     else:
         data = pd.read_msgpack(unpacked_data)
 
-    return data.xs(migrationFrom, level='CITIZEN', axis=1).iloc[0][0]
+    return data
+
+def __getMigrationFromTo(migrationTo, migrationFrom):
+    return __getMigrationTo(migrationTo).xs(migrationFrom, level='CITIZEN', axis=1).iloc[0][0]
