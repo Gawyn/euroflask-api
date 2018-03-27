@@ -34,6 +34,8 @@ def getMigrantsComparisonData(countryCodes):
     }
 
 def getMigrationFromHistory(migrationTo, migrationFrom):
+    if migrationFrom is None:
+        migrationFrom = 'TOTAL'
     popHistory = __getMigrationTo(migrationTo)
     popHistory = popHistory.where((pd.notnull(popHistory)), None)
     popHistory = popHistory.xs(migrationFrom, level='CITIZEN', axis=1)

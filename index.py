@@ -15,8 +15,8 @@ def migrantsComparison():
     geoKeys = request.args.get('countries').split(',')
     return jsonify(eurostat_data.getMigrantsComparisonData(geoKeys))
 
-@app.route('/migration-history-from')
+@app.route('/population')
 def populationOrigin():
-    migrationTo = request.args.get('to')
+    migrationTo = request.args.get('country')
     migrationFrom = request.args.get('from')
     return jsonify(eurostat_data.getMigrationFromHistory(migrationTo, migrationFrom))
