@@ -7,11 +7,12 @@ import redis
 redisClient = redis.StrictRedis(host='localhost', port=6379, db=0)
 import pandas as pd
 
-EuropeanUnionCountries = [
+def europeanUnionCountries():
+    return [
     'BE', 'BG', 'CZ', 'DK', 'DE', 'EE', 'IE', 'EL', 'ES', 'FR',
     'HR', 'IT', 'CY', 'LV', 'LT', 'LU', 'HU', 'MT', 'NL', 'AT',
     'PL', 'PT', 'RO', 'SI', 'SK', 'FI', 'SE', 'UK'
-]
+    ]
 
 def getUnemploymentData(countryCodes):
     result = dict()

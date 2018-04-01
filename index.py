@@ -20,6 +20,9 @@ def populationOrigin():
     migrationTo = request.args.get('country')
     migrationFrom = request.args.get('from')
     if migrationFrom != None:
-        migrationFrom = migrationFrom.split(",")
+        if migrationFrom == 'EU':
+            migrationFrom = eurostat_data.europeanUnionCountries()
+        else:
+            migrationFrom = migrationFrom.split(",")
 
     return jsonify(eurostat_data.getMigrationFromHistoryMultipleCountries(migrationTo, migrationFrom))
