@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-app = Flask('Euroflask')
+app = Flask(__name__)
 CORS(app)
 
 import eurostat_data
