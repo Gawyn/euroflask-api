@@ -19,7 +19,9 @@ def migrantsComparison():
 def populationOrigin():
     migrationTo = request.args.get('country')
     migrationFrom = request.args.get('from')
-    if migrationFrom != None:
+    if migrationFrom == None:
+        migrationFrom = ['TOTAL']
+    else:
         if migrationFrom == 'EU':
             migrationFrom = eurostat_data.europeanUnionCountries()
         else:

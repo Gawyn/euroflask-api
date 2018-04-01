@@ -55,9 +55,6 @@ def getMigrationFromHistory(migrationTo, migrationFrom):
 def getMigrationFromHistoryMultipleCountries(migrationTo, migrationFrom):
     res = {}
 
-    if migrationFrom is None:
-        migrationFrom = 'TOTAL'
-
     for countryCode in migrationFrom:
         res.update(getMigrationFromHistory(migrationTo, countryCode))
 
