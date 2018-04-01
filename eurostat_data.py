@@ -1,10 +1,11 @@
+import os
 from pandasdmx import Request
 import pandas as pd
 estat = Request('ESTAT')
 estat.client.config = {'stream': True, 'timeout': 120}
 
 import redis
-redisClient = redis.StrictRedis(host='localhost', port=6379, db=0)
+redisClient = redis.from_url(os.environ['REDISCLOUD_URL'])
 
 def europeanUnionCountries():
     return [
