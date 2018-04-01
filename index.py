@@ -19,4 +19,7 @@ def migrantsComparison():
 def populationOrigin():
     migrationTo = request.args.get('country')
     migrationFrom = request.args.get('from')
-    return jsonify(eurostat_data.getMigrationFromHistory(migrationTo, migrationFrom))
+    if migrationFrom != None:
+        migrationFrom = migrationFrom.split(",")
+
+    return jsonify(eurostat_data.getMigrationFromHistoryMultipleCountries(migrationTo, migrationFrom))
