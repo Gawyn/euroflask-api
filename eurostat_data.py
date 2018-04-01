@@ -5,7 +5,6 @@ estat.client.config = {'stream': True, 'timeout': 120}
 
 import redis
 redisClient = redis.StrictRedis(host='localhost', port=6379, db=0)
-import pandas as pd
 
 def europeanUnionCountries():
     return [
