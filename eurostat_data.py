@@ -16,11 +16,7 @@ def europeanUnionCountries():
 
 def getUnemploymentData(countryCodes):
     result = dict()
-    geoKeys = "+".join(countryCodes)
-    resp = estat.data('une_rt_a', key={'GEO': geoKeys})
-    data = resp.write(s for s in resp.data.series if s.key.AGE == 'TOTAL')
-    data = data.where((pd.notnull(data)), None)
-    data = data.loc[:, ('PC_ACT', 'TOTAL', 'T')]
+    data = fetchUnemployment()
 
     for countryCode in countryCodes:
         values = data[[countryCode]].values.tolist()[::-1]
@@ -31,6 +27,20 @@ def getUnemploymentData(countryCodes):
         years.append(year.qyear)
 
     return {'years': years, 'data': result}
+
+def fetchUnemployment():
+    unpacked_data = redisClient.get('unemployment')
+
+    if unpacked_data is None:
+        resp = estat.data('une_rt_a', key={'GEO': '+'.join(europeanUnionCountries())})
+        data = resp.write(s for s in resp.data.series if s.key.AGE == 'TOTAL')
+        data = data.where((pd.notnull(data)), None)
+        data = data.loc[:, ('PC_ACT', 'TOTAL', 'T')]
+
+        redisClient.set('unemployment', data.to_msgpack(compress='zlib'))
+    else:
+        data = pd.read_msgpack(unpacked_data)
+
 
 def getMigrantsComparisonData(countryCodes):
     return {'to':
