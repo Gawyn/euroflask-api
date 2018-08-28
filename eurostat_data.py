@@ -41,7 +41,7 @@ def getMigrantsComparisonData(countryCodes):
     }
 
 def getMigrationFromHistory(migrationTo, migrationFrom):
-    popHistory = __getMigrationTo(migrationTo)
+    popHistory = getMigrationTo(migrationTo)
     popHistory = popHistory.where((pd.notnull(popHistory)), None)
     popHistory = popHistory.xs(migrationFrom, level='CITIZEN', axis=1)
     popHistory = list(popHistory.to_dict().values())[0]
@@ -60,10 +60,7 @@ def getMigrationFromHistoryMultipleCountries(migrationTo, migrationFrom):
 
     return res
 
-def __migrationToKey(migrationTo):
-    return "migrationTo" + migrationTo
-
-def __getMigrationTo(migrationTo):
+def getMigrationTo(migrationTo):
     unpacked_data = redisClient.get(__migrationToKey(migrationTo))
     if unpacked_data is None:
         resp = estat.data('migr_pop1ctz', key={'GEO': migrationTo, 'SEX': 'T', 'AGE': 'TOTAL'})
@@ -74,5 +71,8 @@ def __getMigrationTo(migrationTo):
 
     return data
 
+def __migrationToKey(migrationTo):
+    return "migrationTo" + migrationTo
+
 def __getLastMigrationFromTo(migrationTo, migrationFrom):
-    return __getMigrationTo(migrationTo).xs(migrationFrom, level='CITIZEN', axis=1).iloc[0][0]
+    return getMigrationTo(migrationTo).xs(migrationFrom, level='CITIZEN', axis=1).iloc[0][0]
