@@ -4,4 +4,4 @@ from worker import conn
 
 q = Queue(connection=conn)
 
-q.enqueue(eurostat_data.fetchUnemployment)
+q.enqueue(eurostat_data.fetchUnemployment, False)
