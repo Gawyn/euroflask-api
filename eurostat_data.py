@@ -28,10 +28,10 @@ def getUnemploymentData(countryCodes):
 
     return {'years': years, 'data': result}
 
-def fetchUnemployment():
+def fetchUnemployment(useCache=True):
     unpacked_data = redisClient.get('unemployment')
 
-    if unpacked_data is None:
+    if unpacked_data is None or useCache is False:
         resp = estat.data('une_rt_a', key={'GEO': '+'.join(europeanUnionCountries())})
         data = resp.write(s for s in resp.data.series if s.key.AGE == 'TOTAL')
         data = data.where((pd.notnull(data)), None)
@@ -70,9 +70,9 @@ def getMigrationFromHistoryMultipleCountries(migrationTo, migrationFrom):
 
     return res
 
-def getMigrationTo(migrationTo):
+def getMigrationTo(migrationTo, useCache=True):
     unpacked_data = redisClient.get(__migrationToKey(migrationTo))
-    if unpacked_data is None:
+    if unpacked_data is None or useCache is False:
         resp = estat.data('migr_pop1ctz', key={'GEO': migrationTo, 'SEX': 'T', 'AGE': 'TOTAL'})
         data = resp.write()
         redisClient.set(__migrationToKey(migrationTo), data.to_msgpack(compress='zlib'))
